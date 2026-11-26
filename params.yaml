@@ -1,0 +1,8 @@
+# Параметри DVC-пайплайну (поглиблений рівень, крок 10).
+# Ці значення підхоплюються scripts/dvc_train.py; зміна будь-якого з них
+# змушує `dvc repro` перевиконати стадію train (і залежну від неї evaluate),
+# але НЕ prepare.
+train:
+  data_version: v2   # який навчальний набір узяти: v1 | v2
+  ngram_max: 2       # TfidfVectorizer(ngram_range=(1, ngram_max))
+  C: 1.0             # сила регуляризації LogisticRegression

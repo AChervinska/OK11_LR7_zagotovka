@@ -1,0 +1,81 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python scripts/generate_data.py
+    deps:
+    - path: app/dataset.py
+      hash: md5
+      md5: dca7c21b5bd9885ec6820e764938592d
+      size: 5664
+    - path: scripts/generate_data.py
+      hash: md5
+      md5: a3ae26ad668923ae8bb5b1483bfdceb8
+      size: 1237
+    outs:
+    - path: data/eval.csv
+      hash: md5
+      md5: 83537dc4a8ea5cff9ff2cb1559b33090
+      size: 3451
+    - path: data/train_v1.csv
+      hash: md5
+      md5: f51f9456e4d15379083dbfa457b34b37
+      size: 15251
+    - path: data/train_v2.csv
+      hash: md5
+      md5: c744bdc487f1b503c32e4f2da0a896ba
+      size: 38351
+  train:
+    cmd: python scripts/dvc_train.py
+    deps:
+    - path: app/model.py
+      hash: md5
+      md5: f62e13e56da6cdad70af69e3b8f10b41
+      size: 2909
+    - path: data/train_v1.csv
+      hash: md5
+      md5: f51f9456e4d15379083dbfa457b34b37
+      size: 15251
+    - path: data/train_v2.csv
+      hash: md5
+      md5: c744bdc487f1b503c32e4f2da0a896ba
+      size: 38351
+    - path: scripts/dvc_train.py
+      hash: md5
+      md5: 4c609868d6448fe256b8065aebc667eb
+      size: 1517
+    params:
+      params.yaml:
+        train.C: 1.0
+        train.data_version: v2
+        train.ngram_max: 2
+    outs:
+    - path: models/pipeline
+      hash: md5
+      md5: 6280cb52d8c05a8795879580e1f8bfbd.dir
+      size: 9603
+      nfiles: 5
+  evaluate:
+    cmd: python scripts/dvc_evaluate.py
+    deps:
+    - path: data/eval.csv
+      hash: md5
+      md5: 83537dc4a8ea5cff9ff2cb1559b33090
+      size: 3451
+    - path: models/pipeline
+      hash: md5
+      md5: 6280cb52d8c05a8795879580e1f8bfbd.dir
+      size: 9603
+      nfiles: 5
+    - path: scripts/dvc_evaluate.py
+      hash: md5
+      md5: 14aad877502ee2c22b1c6d4fd94b1c6f
+      size: 1024
+    - path: scripts/evaluate.py
+      hash: md5
+      md5: 1d45b1b7b0007802afb7472c70515a6d
+      size: 1996
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 0b5ed43a0d33bb60ef9bcc3c6198347a
+      size: 62

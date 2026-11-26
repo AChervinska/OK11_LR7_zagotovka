@@ -1,0 +1,36 @@
+
+stages:
+  prepare:
+    cmd: python scripts/generate_data.py
+    deps:
+      - scripts/generate_data.py
+      - app/dataset.py
+    outs:
+      - data/train_v1.csv
+      - data/train_v2.csv
+      - data/eval.csv
+
+  train:
+    cmd: python scripts/dvc_train.py
+    deps:
+      - scripts/dvc_train.py
+      - app/model.py
+      - data/train_v1.csv
+      - data/train_v2.csv
+    params:
+      - train.data_version
+      - train.ngram_max
+      - train.C
+    outs:
+      - models/pipeline
+
+  evaluate:
+    cmd: python scripts/dvc_evaluate.py
+    deps:
+      - scripts/dvc_evaluate.py
+      - scripts/evaluate.py
+      - models/pipeline
+      - data/eval.csv
+    metrics:
+      - metrics.json:
+          cache: false
